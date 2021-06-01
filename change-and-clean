@@ -1,0 +1,6 @@
+echo "Rename a filename to filename +date"
+name=$(date '+%Y-%m-%d')
+mv /location/filename.tar.gz /location/"$name.tar.gz"
+
+echo "Delete files older than 30 days"
+find /location -name "*.tar.gz" -type f -mtime +30 -delete
