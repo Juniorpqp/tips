@@ -1,0 +1,4 @@
+# Wget command to download recently files with base on timestamp and create log file 
+
+wget -o log-name.txt -N -r --user=user-ftp --password='GoodPassword' ftp://ip_address/folder1/folder2
+
