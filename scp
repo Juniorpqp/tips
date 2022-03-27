@@ -1,3 +1,6 @@
 # To copy files with password and run in background
 
-nohup sshpass -p "Password" scp -p root@IP_:/directory/file . > my.log 2>&1 &
+# yum install sshpass
+# apt install sshpass
+
+nohup sshpass -p "Password" scp -p user@IP_:/directory/file . > my.log 2>&1 &
