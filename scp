@@ -1,0 +1,3 @@
+# To copy files with password and run in background
+
+nohup sshpass -p "Password" scp -p root@IP_:/directory/file . > my.log 2>&1 &
