@@ -1,0 +1,7 @@
+## Password Validation Component Installation and Uninstallation
+
+
+INSTALL COMPONENT 'file://component_validate_password';
+
+
+UNINSTALL COMPONENT 'file://component_validate_password';
