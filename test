@@ -1,0 +1,38 @@
+# Disable Windows Updates and configure settings
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0
+Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'LimitBlankPasswordUse' -Value 0
+Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Value 0
+
+# Disable Teredo
+netsh interface teredo set state disabled
+
+# Disable Multicast Name Resolution and Internet Communication via Group Policy
+Invoke-Expression -Command "gpedit.msc /gpcomputer:Local"
+
+# Set Group Policy to disable Multicast Name Resolution
+Invoke-Command -ScriptBlock {
+    $gpo = "Computer Configuration\Administrative Templates\Network\DNS Client"
+    $policy = "Turn off Multicast Name Resolution"
+    Set-GPRegistryValue -Name $gpo -Key "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient" -ValueName $policy -Type DWord -Value 1
+}
+
+# Set Group Policy to restrict Internet Communication
+Invoke-Command -ScriptBlock {
+    $gpo = "Computer Configuration\Administrative Templates\System\Internet Communication Management"
+    $policy = "Restrict Internet Communication"
+    Set-GPRegistryValue -Name $gpo -Key "HKLM\Software\Policies\Microsoft\Windows\Internet Communication Management" -ValueName $policy -Type DWord -Value 1
+}
+
+# Disable Windows Defender features
+Set-MpPreference -DisableRealtimeMonitoring $true -DisableScriptScanning $true -DisableBehaviorMonitoring $true -DisableIOAVProtection $true -DisableIntrusionPreventionSystem $true
+
+# Disable App and Browser Control
+Set-ExecutionPolicy Unrestricted -Scope Process -Force
+
+# Download and execute disable-defender script
+Invoke-WebRequest -Uri "https://github.com/jeremybeaume/tools/blob/master/disable-defender.ps1" -OutFile "$env:TEMP\disable-defender.ps1"
+.\$env:TEMP\disable-defender.ps1
+
+# Notify the user to restart the computer
+Write-Output "Please restart the computer to apply all changes."
